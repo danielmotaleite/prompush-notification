@@ -1,0 +1,71 @@
+version = '1.0.0'
+defaultTasks 'clean','build'
+apply plugin: 'java'
+apply plugin: 'idea'
+sourceCompatibility = 1.5
+ext.rundeckPluginVersion = '1.2'
+
+/**
+ * Set this to a comma-separated list of full classnames of your implemented Rundeck
+ * plugins.
+ */
+ext.pluginClassNames = 'org.rundeck.plugins.notification.PromPushNotification'
+
+
+repositories {
+    mavenCentral()
+    
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+configurations{
+    //declare custom pluginLibs configuration to include only libs for this plugin
+    pluginLibs
+
+    //declare compile to extend from pluginLibs so it inherits the dependencies
+    compile{
+        extendsFrom pluginLibs
+    }
+}
+
+dependencies {
+    // add any third-party jar dependencies you wish to include in the plugin
+    // using the `pluginLibs` configuration as shown here:
+
+    //the compile dependency won't add the rundeck-core jar to the plugin contents
+    compile group: 'org.rundeck', name: 'rundeck-core', version: '2.9.3'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+    pluginLibs group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
+
+    testCompile group: 'junit', name: 'junit', version: '4.4'
+}
+
+// task to copy plugin libs to output/lib dir
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.pluginLibs
+}
+
+
+jar {
+    from "$buildDir/output"
+    manifest {
+        def libList = configurations.pluginLibs.collect{'lib/'+it.name}.join(' ')
+        attributes 'Rundeck-Plugin-Classnames': pluginClassNames
+        attributes 'Rundeck-Plugin-File-Version': version
+        attributes 'Rundeck-Plugin-Version': rundeckPluginVersion, 'Rundeck-Plugin-Archive': 'true'
+        attributes 'Rundeck-Plugin-Libs': "${libList}"
+    }
+}
+jar.dependsOn(copyToLib)
+
+jar.doLast { task ->
+    ant.checksum file: task.archivePath
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.3'
+}
