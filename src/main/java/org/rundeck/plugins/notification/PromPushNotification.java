@@ -46,17 +46,18 @@ public class PromPushNotification implements NotificationPlugin {
 
         rdProjectName = executionData.get("project").toString();
 
-        if (!executionData.containsKey("group") || executionData.get("group").toString().equals("")) {
-            rdGroupName = "root";
-        } else {
-            rdGroupName = executionData.get("group").toString();
-        }
-
         rdJob = executionData.get("job");
         rdJobData = (Map) rdJob;
+
+        if (!rdJobData.containsKey("group") || rdJobData.get("group").toString().equals("")) {
+            rdGroupName = "root";
+        } else {
+            rdGroupName = rdJobData.get("group").toString();
+        }
+
         rdJobName = rdJobData.get("name").toString();
 
-        return "/metrics/job/" + job + "/project_name/" + rdProjectName + "/group_name/" + rdGroupName + "/job_name/" + rdJobName;
+        return "/metrics/job/" + job.replace("/", "-") + "/project_name/" + rdProjectName.replace("/", "-") + "/group_name/" + rdGroupName.replace("/", "-") + "/job_name/" + rdJobName.replace("/", "-");
     }
 
 
@@ -120,7 +121,7 @@ public class PromPushNotification implements NotificationPlugin {
         Double dateEndedUnixtime = Double.parseDouble(executionData.get("dateEndedUnixtime").toString());
         Double dateStartedUnixtime = Double.parseDouble(executionData.get("dateStartedUnixtime").toString());
 
-        Double duration = dateEndedUnixtime-dateStartedUnixtime;
+        Double duration = (dateEndedUnixtime-dateStartedUnixtime)/1000;
 
         String metricName = "rundeck_" + trigger + "_job ";
 
