@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 @Plugin(service = "Notification", name = "PromPushNotification")
@@ -62,6 +64,7 @@ public class PromPushNotification implements NotificationPlugin {
 
 
     private static void HttpRequest(String url, String body) {
+        // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-jvm-ttl.html
         HttpClient client = new HttpClient();
 
         PostMethod method = new PostMethod(url);

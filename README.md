@@ -3,7 +3,7 @@
 
 This is a Rundeck Notification plugin that will send a message to an Prometheus Gateway.
 
-[![Build Status](https://travis-ci.org/marcelosousaalmeida/prompush-notification.svg)](https://travis-ci.org/marcelosousaalmeida/prompush-notification)
+[![Build Status](https://travis-ci.org/marceloalmeida/prompush-notification.svg)](https://travis-ci.org/marceloalmeida/prompush-notification)
 
 ## Build / Deploy
 
