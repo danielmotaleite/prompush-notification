@@ -78,7 +78,7 @@ public class PromPushNotification implements NotificationPlugin {
         try {
             int statusCode = client.executeMethod(method);
 
-            if (statusCode != HttpStatus.SC_ACCEPTED) {
+            if (statusCode != 200) {
                 LOG.error("Method failed: " + method.getStatusLine());
             } else {
                 LOG.info("Method success: " + method.getStatusLine());
